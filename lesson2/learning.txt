@@ -1,3 +1,5 @@
+learn about EC2 instance
+
 
 Launch Instances -> name : WebServer -> OS : Ubuntu -> 24.04 -> Instance Type -> t2.micro 
 
