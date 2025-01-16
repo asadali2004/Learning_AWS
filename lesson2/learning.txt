@@ -1,0 +1,35 @@
+
+Launch Instances -> name : WebServer -> OS : Ubuntu -> 24.04 -> Instance Type -> t2.micro 
+
+-> create key -> name : ec2_secret_key -> generate key 
+
+copy command from ec2 instance connect tab and paste it in git bash 
+
+
+I want to run python program in EC2 machine
+
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install python3 python3-pip -y
+
+sudo apt update
+
+sudo apt install python3-venv
+
+python3 -m venv venv
+
+source venv/bin/activate
+
+mkdir myapp
+
+cd myapp
+
+nano app.py
+
+then write code in nano 
+
+crtl x for exit
+
+then python3 app.py
+
+if error then pip install flask
