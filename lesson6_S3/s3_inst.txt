@@ -1,0 +1,18 @@
+Go to S3 Console
+
+Create bucket by name : lpu-college-images
+
+In the S3 bucket add the following bucket policy to allow public read access to all objects in the bucket:
+
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "PublicReadGetObject",
+			"Effect": "Allow",
+			"Principal": "*",
+			"Action": "s3:GetObject",
+			"Resource": "arn:aws:s3:::lpucollege-images/*"
+		}
+	]
+}
