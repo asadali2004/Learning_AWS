@@ -1,0 +1,23 @@
+connect to ec2 machine
+
+sudo apt update
+sudo apt install -y apache2
+
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+sudo mkdir /var/www/html/lpu
+
+sudo chmod -R 755 /var/www/html/lpu
+sudo chown -R www-data:www-data /var/www/html/lpu
+
+
+sudo lsof -i :80
+
+sudo systemctl start apache2
+
+sudo systemctl status apache2
+
+sudo journalctl -u apache2
+
+sudo tail -f /var/log/apache2/error.log

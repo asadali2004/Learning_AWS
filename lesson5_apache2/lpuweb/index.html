@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPU College - Home</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">LPU College</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#courses">Courses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <header id="home" class="jumbotron text-center text-white bg-primary">
+        <h1>Welcome to LPU College</h1>
+        <p>Your pathway to a brighter future</p>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="container py-5">
+        <h2 class="text-center mb-4">About Us</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <p>LP University (LPU) is one of the top-ranking educational institutions, offering a wide range of undergraduate
+                    and postgraduate courses. We aim to provide a quality education to shape the future of our students.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="https://via.placeholder.com/500x300" alt="College Image" class="img-fluid">
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Our Courses</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Course Image">
+                        <div class="card-body">
+                            <h5 class="card-title">Computer Science</h5>
+                            <p class="card-text">Learn the latest technologies in computer science, software development, and AI.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Course Image">
+                        <div class="card-body">
+                            <h5 class="card-title">Mechanical Engineering</h5>
+                            <p class="card-text">Explore the world of mechanical systems and engineering design.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Course Image">
+                        <div class="card-body">
+                            <h5 class="card-title">Business Administration</h5>
+                            <p class="card-text">Master the skills needed to manage and lead in today's business world.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container py-5">
+        <h2 class="text-center mb-4">Contact Us</h2>
+        <form id="contact-form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="Your email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" id="message" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-3 bg-dark text-white">
+        <p>&copy; 2025 LPU College | All Rights Reserved</p>
+    </footer>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>

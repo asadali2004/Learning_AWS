@@ -1,0 +1,13 @@
+ssh into ec2
+node and all installed
+
+sudo apt update
+sudo apt install nginx -y
+
+check in nginx is running with EC2 IP Address
+
+sudo nano /etc/nginx/nginx.conf
+
+sudo nginx -t
+
+sudo systemctl restart nginx

@@ -1,0 +1,22 @@
+ssh to ec2
+
+sudo apt update
+sudo apt install nodejs npm
+
+curl -sL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+node -v
+
+mkdir node-server
+cd node-server
+
+touch server.js
+
+nano server.js
+
+nohup node server.js > output.log 2>&1 &
+
+cat output.log 
+
+tail -f output.log

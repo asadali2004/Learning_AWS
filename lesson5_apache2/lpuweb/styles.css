@@ -1,0 +1,46 @@
+/* Custom styles for the LPU College website */
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 60px 0;
+}
+
+#about img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+section {
+    padding: 40px 0;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: white !important;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #f8f9fa !important;
+}
+
+/* Contact form styles */
+form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+form .btn {
+    padding: 10px;
+}
