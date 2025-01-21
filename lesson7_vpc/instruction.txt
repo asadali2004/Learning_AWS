@@ -1,0 +1,31 @@
+10.0.0.0/16 -> 32 - 16 => 2^16 => 65,536
+
+IPV4 -> 32 bits 255.255.255.255 -> 2^32 IP address -> 4.3 billion
+
+10.0.0.0 -> 00001010.00000000.00000000.00000000
+
+Public Subnet -> 10.0.1.0/24 -> 32 - 24 -> 256
+
+Private Subnet -> 10.0.2.0/24 -> 32 - 24 -> 256
+
+
+vpc -> telecompany_vpc
+
+subnets -> availability zone -> eu-north-1a
+    public_subnet -> 
+    private_subnet ->
+
+internet_gateway
+    tele_igw
+
+route_table
+    private_route_table
+    public_route_table
+
+
+EC2 Instance
+    public_server
+        security Group : sg_public_server
+    
+    private_server
+
