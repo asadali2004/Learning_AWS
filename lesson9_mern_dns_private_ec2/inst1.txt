@@ -1,0 +1,95 @@
+1) Create IAM user with full access to EC2, S3.
+
+telecom_user
+
+2) Login with telecom_user
+
+3) Select Asia Pacific Mumbai
+
+4) vpc -> telecompany_vpc
+
+IPv4 CIDR -> 10.0.0.0/16
+
+5) subnets
+
+public subnet -> tele_public_subnet
+Availability Zone -> ap-south-1a
+IPv4 subnet CIDR block -> 10.0.1.0/24
+
+
+private subnet -> tele_private_subnet
+Availability Zone -> ap-south-1a
+IPv4 subnet CIDR block -> 10.0.2.0/24
+
+
+6) EC2 Instance
+
+a) instance -> tele_public_ec2_instance
+
+OS : amazon linux
+
+secret_key : tele_public_ec2_instance_secret_key download the key to local place
+
+network settings : select VPC and public subnet created
+
+create security group : tele_public_public_sg with ssh(22), http(80 - TCP) and https (443 - TCP)
+
+Now connect to instance with ssh
+
+chmod 400 "tele_public_ec2_instance_secret_key.pem" 
+
+ssh -i "tele_public_ec2_instance_secret_key.pem" ec2-user@43.205.191.55 (we will not be able to connect) 
+as the VPC is not allowing any internet access
+
+7) internet gateway -> tele_internet_gateway
+attach to VPC -> telecompany_vpc
+
+8) Create a route table -> tele_public_route_table
+Edit routes -> add route -> 0.0.0.0/0 and select internet gateway -> tele_internet_gateway
+Edit subnet association -> attach select -> tele_public_subnet 
+
+9) Go to tele_public_subnet -> edit subnet settings
+enable auto assign public IPV4 address
+edit route table association select public route if not selected
+
+10) EC2 Instance
+
+a) instance -> tele_private_ec2_instance
+
+OS : amazon linux
+
+secret_key : tele_private_ec2_instance_secret_key download the key to local place
+
+network settings : select VPC and private subnet created
+
+create security group : tele_private_public_sg with ssh(22)
+
+Now connect to public instance with ssh
+
+ssh -i "tele_public_ec2_instance_secret_key.pem" ec2-user@43.205.191.55
+
+create file tele_private_ec2_instance_secret_key.pem and copy content of the file downloaded
+
+touch ele_private_ec2_instance_secret_key.pem
+
+chmod 400 "tele_private_ec2_instance_secret_key.pem" 
+
+then connect to private ec2 instance
+
+ssh -i "tele_private_ec2_instance_secret_key.pem" ec2-user@10.0.2.16
+
+try ping 8.8.8.8 it wont be able to connect to internet outside.
+
+11) Create a NAT gateway -> tele_public_nat_gateway
+
+select public subnet
+
+attach or create elastic IP address
+
+12) Create a route table -> tele_private_route_table
+Edit routes -> add route -> 0.0.0.0/0 and select nat gateway -> tele_public_nat_gateway
+Edit subnet association -> attach select -> tele_private_subnet 
+
+
+
+

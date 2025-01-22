@@ -1,0 +1,63 @@
+sudo yum update -y
+sudo yum install -y nodejs
+
+node -v
+npm -v
+
+Install nvm:
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+sudo nano ~/.bashrc
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+nvm list
+
+nvm install node
+
+nvm alias default node
+
+install pm2
+
+sudo npm install -g pm2
+
+mkdir telecom_public_server
+cd telecom_public_server
+sudo nano public-server.js
+
+npm install express axios
+
+npm install swagger-ui-express swagger-jsdoc
+
+pm2 start public-server.js (in public ec2 instance)
+
+
+mkdir telecom_user_server
+cd telecom_user_server 
+sudo nano private-server.js
+npm install express axios
+
+pm2 start private-server.js (in private ec2 instance)
+
+run both servers
+
+Public Server:
+
+Allow inbound traffic on port 80 (HTTP) or 443 (HTTPS) from the internet and 8080.
+Allow outbound traffic to the private server (port 3000).
+
+
+Private Server:
+
+Allow inbound traffic on port 3000 from the public server's security group.
+Deny direct inbound traffic from the interne
+
+
+
+curl -X POST http://10.0.2.254:3000/internal/process \
+-H "Content-Type: application/json" \
+-d '{"data": "test"}'
+
+
