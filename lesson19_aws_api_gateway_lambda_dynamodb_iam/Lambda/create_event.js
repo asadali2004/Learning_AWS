@@ -1,7 +1,7 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 
 // Initialize DynamoDB client
-const dynamoDb = new DynamoDBClient({ region: "us-east-1" });
+const dynamoDb = new DynamoDBClient({ region: "ap-south-1" });
 
 export const handler = async (event) => {
   const tableName = "Events";
@@ -37,8 +37,14 @@ export const handler = async (event) => {
 
     return {
       statusCode: 201,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+    },
       body: JSON.stringify({
         message: "Event created successfully!",
+        eventId,
         event: {
           eventId,
           eventName,
