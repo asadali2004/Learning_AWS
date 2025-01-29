@@ -1,0 +1,268 @@
+1) Create IAM user
+    As a root user go to IAM in AWS console
+    username : telecom_user
+    attache policies directly
+
+    Sign in URL : https://474668420577.signin.aws.amazon.com/console
+
+    download details in .csv file which has all details including password
+
+2) Login as IAM user
+    Enter account id : 474668420577
+    user name : telecom_user
+    password : *********
+
+3) Create a VPC under Mumbai
+    select vpc only
+    name : telcom_vpc
+    CIDR : 10.0.0.0/16 (It provisions 65,536 IPs some will be reserves so around 65K will get)
+    VPC ID : vpc-0f3b015ccd47df2be
+    DHCP : dopt-06846cdd9944a9fd2 ( Domain name servers : AmazonProvidedDNS)
+    Main route table : rtb-089693844a2834288 (Associations : Subnet Associations )
+    Main network ACL : acl-05c8a539dee8178fa (Inbound and Outbound rules, Subnet Associations)
+    Owner ID : 474668420577
+    Resource Map (Check the graph)
+
+4) Create Subnets
+
+a) Public Subnet 
+    select VPC : telcom_vpc
+    name : public_subnet_telco
+    Availability Zone (AZ) : AP (Mumbai) ap-south-1a
+    subnet CIDR : 10.0.1.0/24
+    subnet id : subnet-07661628101bdc58b
+    ARN : arn:aws:ec2:ap-south-1:474668420577:subnet/subnet-07661628101bdc58b
+    route table id : rtb-089693844a2834288  
+
+
+b) Private Subnet
+    name : private_subnet_telco
+    select VPC : telcom_vpc
+    Availability Zone (AZ) : AP (Mumbai) ap-south-1a
+    subnet CIDR : 10.0.2.0/24
+    subnet id : subnet-08e509c1d0d928e2a
+    ARN : arn:aws:ec2:ap-south-1:474668420577:subnet/subnet-08e509c1d0d928e2a
+    route table id : rtb-089693844a2834288  
+
+5) Create Internet Gateway
+    name : public_telco_igw
+    Attach to VPC : telcom_vpc
+    igw id : igw-01f30bb51ea80ace7
+
+6) Route Tables
+
+a) Public Route Table 
+    select VPC : telcom_vpc
+    name : public_subnet_route_table
+    associate subnets : subnet-07661628101bdc58b (Only Public : public_subnet_telco)
+    route table id : rtb-015f14c6e939dea09  
+
+b) Private Route Table 
+    select VPC : telcom_vpc
+    name : private_subnet_route_table
+    associate subnets : subnet-08e509c1d0d928e2a (Only Public : private_subnet_telco)
+    route table id : rtb-03d986da38d2c174f
+
+7) Create NAT Gateway
+    name : telco_nat_gateway
+    subnet : subnet-07661628101bdc58b / public_subnet_telco
+    allocate elastic IP
+    nat gateway id : nat-083273d5c07549a93
+    ARN : arn:aws:ec2:ap-south-1:474668420577:natgateway/nat-083273d5c07549a93
+
+8) Create EC2 instances Public and Private
+
+a) Public EC2 instance
+    In EC2 click launch instances
+    name : public_telco_server
+    OS : Amazon Linux
+    Instance Type : t2.micro
+    Key pair to ssh name : public_telco_server_secret (.pem file)
+    Network Settings
+        telcom_vpc
+        public_subnet_telco
+        Auto Assign Public IP : Enable
+        Security Group : name -> public_telco_server_security_group
+        Inbound Security Group rule : Only SSH, 
+            Add HTTP and HTTPS with add security group rule
+    
+    instance ID : i-064fccf41dc22f027
+    Public IPV4 address : 3.110.160.29
+    Auto assigned IP : 3.110.160.29
+    Private IP : 10.0.1.57
+
+    Go to public_subnet_route_table and associate intergateway to it i,e public_telco_igw
+    This allows outside users i,e public internet to access out subnet and its resources like EC2
+
+
+b) Private EC2 instance
+    In EC2 click launch instances
+    name : private_telco_server
+    OS : Amazon Linux
+    Instance Type : t2.micro
+    Key pair to ssh name : private_telco_server_secret (.pem file)
+    Network Settings
+        telcom_vpc
+        private_subnet_telco
+        Auto Assign Public IP : Disable
+        Security Group : name -> private_telco_server_security_group
+        Inbound Security Group rule : Only SSH
+    
+    instance ID : i-01bd0a5e57999a1c2
+    Private IP : 10.0.2.79
+
+    Go to private_subnet_route_table and associate nat gateway to it i,e telco_nat_gateway
+    This allows private server to access internet so that 
+        in case if something has to be installed or downloaded then can connect to network
+    
+9) Connect to Public EC2 instancs using SSH
+    Run  chmod 400 "public_telco_server_secret.pem" command to make it only Readable
+    connect to EC2 with ssh -i "public_telco_server_secret.pem" ec2-user@3.110.160.29
+
+10) Install git in public ec2 machine
+
+    sudo yum update -y
+    sudo yum install git -y
+
+    git --version
+        git version 2.40.1
+
+    git clone https://github.com/lakshmikant-lpu/aws_services.git
+
+    ls -lrt 
+        drwxr-xr-x. 3 ec2-user ec2-user 68 Jan 24 02:53 aws_services
+
+    cd aws_services
+
+    git branch
+        main
+
+    git branch -a # This will list all branches
+
+    git checkout lesson11_aws_ec2_public_server
+        branch 'lesson11_aws_ec2_public_server' set up to track 'origin/lesson11_aws_ec2_public_server'.
+        Switched to a new branch 'lesson11_aws_ec2_public_server'
+
+    git branch
+        lesson11_aws_ec2_public_server
+
+    ls -lrt (This will show all the files in this branch)
+
+    node -v (It would say I dont get this command)
+    Install nodejs
+
+    sudo yum update -y
+    sudo yum install -y nodejs
+
+    node -v
+        v18.20.5
+
+    Install nvm: (To manage node versions)
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+    sudo nano ~/.bashrc
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+    nvm list
+        ->       system
+        iojs -> N/A (default)
+        node -> stable (-> N/A) (default)
+        unstable -> N/A (default)
+
+    nvm install node
+        Downloading and installing node v23.6.1...
+        Downloading https://nodejs.org/dist/v23.6.1/node-v23.6.1-linux-x64.tar.xz...
+        ##################################################################################################################################################################################################### 100.0%
+        Computing checksum with sha256sum
+        Checksums matched!
+        Now using node v23.6.1 (npm v10.9.2)
+        Creating default alias: default -> node (-> v23.6.1)
+
+    nvm list
+        ->      v23.6.1
+         system
+        default -> node (-> v23.6.1)
+        iojs -> N/A (default)
+        unstable -> N/A (default)
+        node -> stable (-> v23.6.1) (default)
+        stable -> 23.6 (-> v23.6.1) (default)
+        lts/* -> lts/jod (-> N/A)
+        lts/argon -> v4.9.1 (-> N/A)
+        lts/boron -> v6.17.1 (-> N/A)
+        lts/carbon -> v8.17.0 (-> N/A)
+        lts/dubnium -> v10.24.1 (-> N/A)
+        lts/erbium -> v12.22.12 (-> N/A)
+        lts/fermium -> v14.21.3 (-> N/A)
+        lts/gallium -> v16.20.2 (-> N/A)
+        lts/hydrogen -> v18.20.6 (-> N/A)
+        lts/iron -> v20.18.2 (-> N/A)
+        lts/jod -> v22.13.1 (-> N/A)
+        
+    node -v
+        v23.6.1
+
+    nvm alias default node
+
+    install pm2
+        sudo npm install -g pm2
+
+
+    Inside aws_services repo 
+    pwd
+        /home/ec2-user
+    cd aws_services/lesson11_aws_ec2_public_server/telecom_public_server
+    
+    pwd
+        /home/ec2-user/aws_services/lesson11_aws_ec2_public_server/telecom_public_server
+    
+    ls -lrt
+
+        total 48
+        drwxr-xr-x. 2 ec2-user ec2-user   110 Jan 24 02:56 views
+        drwxr-xr-x. 4 ec2-user ec2-user    27 Jan 24 02:56 public
+        -rw-r--r--. 1 ec2-user ec2-user   376 Jan 24 02:56 package.json
+        -rw-r--r--. 1 ec2-user ec2-user 40546 Jan 24 02:56 package-lock.json
+        -rw-r--r--. 1 ec2-user ec2-user  2120 Jan 24 02:56 app.js
+
+    
+    Install all node dependencies
+    
+    npm install or npm i
+
+    pm2 start --name "public_server" app.js
+
+    pm2 list (This shows all programs running in background)
+
+    pm2 logs (Shows the command line logs) public-server-error.log (Error logs) and public-server-out.log (Normal logs)
+
+        /home/ec2-user/.pm2/logs/public-server-error.log last 15 lines: 
+        /home/ec2-user/.pm2/logs/public-server-out.log last 15 lines:
+        0|public_s | Public server running on port 4000
+    
+    Access http://3.110.160.29:4000/ (This will not allow as we need 4000 inbound rule in public_telco_server_security_group)
+        
+    go to public_telco_server_security_group
+        add 4000 as inbound rule using custom TCP with 0.0.0.0/0
+    
+11) Connect to private instance from public 2EC2 and run the private server
+
+    ssh -i "public_telco_server_secret.pem" ec2-user@3.110.160.29
+
+    mkdir secrets
+
+    cd secrets
+    
+    # create pem file and copy content of the secret key which we created during private ec2 instance creation in secrets folder
+    sudo nano private_telco_server_secret.pem
+
+    ls -lrt
+        total 4
+        -rw-r--r--. 1 root root 1675 Jan 24 03:17 private_telco_server_secret.pem
+
+    sudo chmod 400 private_telco_server_secret.pem
+
+    ssh -i "private_telco_server_secret.pem" ec2-user@10.0.2.79 # To connect to private EC2 machine
+
+    

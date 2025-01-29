@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea, button {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    input:focus, textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+    .event-list {
+      margin-top: 20px;
+    }
+    .event-item {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .event-item h3 {
+      margin: 0;
+      color: #007bff;
+    }
+    .event-item p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Event Management</h1>
+    
+    <!-- Event Creation Form -->
+    <form id="eventForm">
+      <label for="eventId">Event ID</label>
+      <input type="text" id="eventId" name="eventId" placeholder="Enter event ID" required />
+
+      <label for="eventName">Event Name</label>
+      <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required />
+
+      <label for="eventDate">Event Date</label>
+      <input type="date" id="eventDate" name="eventDate" required />
+
+      <label for="eventLocation">Event Location</label>
+      <input type="text" id="eventLocation" name="eventLocation" placeholder="Enter event location" required />
+
+      <label for="eventDescription">Event Description</label>
+      <textarea id="eventDescription" name="eventDescription" placeholder="Enter event description" rows="4" required></textarea>
+
+      <button type="submit">Create Event</button>
+    </form>
+    <div id="message" class="message"></div>
+
+    <!-- Event List -->
+    <div id="eventList" class="event-list"></div>
+  </div>
+
+  <script>
+    const apiBaseUrl = "https://wi9nkkqs4a.execute-api.ap-south-1.amazonaws.com/development"; // Replace with your API Gateway base URL
+
+    // Handle Event Form Submission
+    document.getElementById('eventForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      // Collect form data
+      const formData = {
+        eventId: document.getElementById('eventId').value,
+        eventName: document.getElementById('eventName').value,
+        eventDate: document.getElementById('eventDate').value,
+        eventLocation: document.getElementById('eventLocation').value,
+        eventDescription: document.getElementById('eventDescription').value,
+      };
+
+      try {
+        // Send POST request to API Gateway
+        const response = await fetch(`${apiBaseUrl}/events`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create event');
+        }
+
+        const result = await response.json();
+
+        // Show success message
+        document.getElementById('message').innerHTML = 
+          `<span class="success">Event created successfully! ID: ${result.eventId}</span>`;
+
+        // Reset form
+        document.getElementById('eventForm').reset();
+
+        // Refresh the event list
+        fetchEvents();
+      } catch (error) {
+        // Show error message
+        document.getElementById('message').innerHTML = 
+          `<span class="error">Error: ${error.message}</span>`;
+      }
+    });
+
+    // Fetch and Display Events
+    async function fetchEvents() {
+      try {
+        const response = await fetch(`${apiBaseUrl}/events`, { method: 'GET' });
+        if (!response.ok) throw new Error('Failed to fetch events');
+
+        const data = await response.json();
+        const eventList = document.getElementById('eventList');
+        eventList.innerHTML = ""; // Clear existing content
+
+        data.events.forEach(event => {
+          const eventItem = document.createElement('div');
+          eventItem.className = 'event-item';
+          eventItem.innerHTML = `
+            <h3>${event.eventName.S}</h3>
+            <p><strong>ID:</strong> ${event.eventId.S}</p>
+            <p><strong>Date:</strong> ${event.eventDate.S}</p>
+            <p><strong>Location:</strong> ${event.eventLocation.S}</p>
+            <p>${event.eventDescription.S}</p>
+          `;
+          eventList.appendChild(eventItem);
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        document.getElementById('eventList').innerHTML = 
+          '<p class="error">Failed to load events. Try again later.</p>';
+      }
+    }
+
+    // Initial Fetch
+    fetchEvents();
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+6) Create API Gateway to invoke lambda
+
+name : EventManagementAPI
+
+resource name : events
+
+enable cors
+
+API URL : 
+
+aws lambda add-permission \
+    --function-name CreateEventFunction \
+    --statement-id 10 \
+    --action lambda:InvokeFunction \
+    --principal apigateway.amazonaws.com \
+    --source-arn "arn:aws:execute-api:ap-south-1:474668420577:wi9nkkqs4a/*/POST/events"
+
+Test API
+
+curl -X POST \
+    -H "Content-Type: application/json" \
+    -d '{
+      "eventId": "11",
+      "eventName": "Workshop",
+      "eventDate": "2025-02-01",
+      "eventLocation": "Delhi",
+      "eventDescription": "A workshop on cloud technologies."
+    }' \
+    https://wi9nkkqs4a.execute-api.ap-south-1.amazonaws.com/development/events
+

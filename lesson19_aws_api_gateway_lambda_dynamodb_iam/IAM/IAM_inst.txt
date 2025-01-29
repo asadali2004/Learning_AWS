@@ -1,0 +1,22 @@
+1) Create IAM User : EventManagerUser
+
+AmazonDynamoDBFullAccess
+AWSLambdaBasicExecutionRole
+AmazonAPIGatewayAdministrator
+AWSLambda_FullAccess
+AdministratorAccess-Amplify
+AmplifyBackendDeployFullAccess
+AmazonCognitoPowerUser
+IAMFullAccess
+
+
+Project : EventManagement
+
+Create access key
+
+4)  IAM role to give access to lambda to connect to DynamoDB
+
+name : LambdaDynamoDBRole
+
+AmazonDynamoDBFullAccess
+AWSLambdaBasicExecutionRole

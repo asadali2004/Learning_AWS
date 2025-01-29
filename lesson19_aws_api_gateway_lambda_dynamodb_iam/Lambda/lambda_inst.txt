@@ -1,0 +1,10 @@
+5) Lambda Function to connect to DynamoDB and display all Events
+
+name : CreateEventFunction
+attach the LambdaDynamoDBRole in permissions under configuration
+
+{
+  "body": "{ \"eventId\": \"4\", \"eventName\": \"Annual Meetup\",
+            \"eventDate\": \"2025-02-15\", \"eventLocation\": \"Bengaluru\",
+            \"eventDescription\": \"Tech Annual meetup.\" }"
+}

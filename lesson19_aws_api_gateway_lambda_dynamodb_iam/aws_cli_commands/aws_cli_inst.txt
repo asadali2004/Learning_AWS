@@ -1,0 +1,8 @@
+npm install -g @aws-amplify/cli
+
+2) aws configure
+
+AWS Access Key ID [****************5YY2]:
+AWS Secret Access Key [****************n7Fa]:
+Default region name [us-east-1]: ap-south-1 
+Default output format [parquet]: json

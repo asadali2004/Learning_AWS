@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Management</title>
+  <style>
+    /* Add some basic styles */
+    .event-list {
+      margin-top: 20px;
+    }
+    .event-item {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    .event-item h3 {
+      margin: 0;
+      color: #007bff;
+    }
+    .event-item p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Event Management</h1>
+
+    <!-- Event Form -->
+    <form id="eventForm">
+      <!-- ... Existing form fields -->
+    </form>
+
+    <!-- Event List Section -->
+    <div id="eventList" class="event-list"></div>
+  </div>
+
+  <script>
+    const apiBaseUrl = "https://wi9nkkqs4a.execute-api.ap-south-1.amazonaws.com/development"; // Replace with your API Gateway base URL
+
+    // Fetch and display events
+    async function fetchEvents() {
+      try {
+        const response = await fetch(`${apiBaseUrl}/events`, { method: 'GET' });
+        if (!response.ok) throw new Error('Failed to fetch events');
+
+        const data = await response.json();
+        const eventList = document.getElementById('eventList');
+        eventList.innerHTML = ""; // Clear existing content
+
+        data.events.forEach(event => {
+          const eventItem = document.createElement('div');
+          eventItem.className = 'event-item';
+          eventItem.innerHTML = `
+            <h3>${event.eventName.S}</h3>
+            <p><strong>ID:</strong> ${event.eventId.S}</p>
+            <p><strong>Date:</strong> ${event.eventDate.S}</p>
+            <p><strong>Location:</strong> ${event.eventLocation.S}</p>
+            <p>${event.eventDescription.S}</p>
+          `;
+          eventList.appendChild(eventItem);
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        document.getElementById('eventList').innerHTML = 
+          '<p class="error">Failed to load events. Try again later.</p>';
+      }
+    }
+
+    // Initial fetch
+    fetchEvents();
+  </script>
+</body>
+</html>
