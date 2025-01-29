@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Metrics Dashboard</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Metrics Dashboard</h1>
+        <nav>
+            <a href="/">Back to Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Metrics Overview</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Dimension</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.forEach(metric=> { %>
+                    <tr>
+                        <td>
+                            <%= metric.dimension %>
+                        </td>
+                        <td>
+                            <%= metric.value %>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </main>
+</body>
+
+</html>

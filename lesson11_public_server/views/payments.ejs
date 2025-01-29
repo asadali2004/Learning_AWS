@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Payments Dashboard</h1>
+    <nav>
+      <a href="/">Back to Dashboard</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Payments Overview</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Transaction Count</th>
+          <th>Transaction Amount</th>
+          <th>Payment Gateway</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.forEach(payment => { %>
+          <tr>
+            <td><%= payment.transactionCount %></td>
+            <td><%= payment.transactionAmount %></td>
+            <td><%= payment.gateway %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

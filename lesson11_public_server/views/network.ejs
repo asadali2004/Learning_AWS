@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Network Dashboard</h1>
+    <nav>
+      <a href="/">Back to Dashboard</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Network Overview</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Element ID</th>
+          <th>Element Type</th>
+          <th>MCCMNC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.forEach(network => { %>
+          <tr>
+            <td><%= network.elementId %></td>
+            <td><%= network.elementType %></td>
+            <td><%= network.mccmnc %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

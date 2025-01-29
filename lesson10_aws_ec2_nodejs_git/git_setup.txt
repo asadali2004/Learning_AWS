@@ -1,0 +1,24 @@
+sudo yum update -y
+sudo yum install git -y
+
+git --version
+
+git clone https://github.com/lakshmikant-lpu/aws_services.git
+
+Additional Steps (Optional)
+
+Generate an SSH key pair:
+
+ssh-keygen -t rsa -b 4096 -C "lakshmikant.lpu@gmail.com"
+
+Add the SSH public key to your Git server - GitHub.
+
+Test the SSH connection: ssh -T git@github.com
+
+cd aws_services
+
+git pull
+
+git status
+
+git checkout <branch_name>

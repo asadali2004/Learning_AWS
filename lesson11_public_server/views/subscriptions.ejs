@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscriptions Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Subscriptions Dashboard</h1>
+    <nav>
+      <a href="/">Back to Dashboard</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Subscriptions Overview</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Count</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.forEach(subscription => { %>
+          <tr>
+            <td><%= subscription.type %></td>
+            <td><%= subscription.count %></td>
+            <td><%= subscription.revenue %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
