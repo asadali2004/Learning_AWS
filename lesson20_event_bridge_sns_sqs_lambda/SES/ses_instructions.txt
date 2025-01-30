@@ -1,0 +1,21 @@
+1) Simple Email Service
+Add Identities : lakshmikant.lpu@gmail.com (Email Addresses)
+
+IAM - Roles -> AWS Service -> Lambda -> SESFullAccess
+
+role name : AWS_SES_Role
+
+Event json
+
+{
+  "recipient_email": "test@gmail.com"
+}
+
+
+
+Amazon Simple Email Service (SES) can be used in your event management system to send email notifications for various purposes, such as:
+
+Confirmation Emails: When an event is successfully created.
+Event Reminders: Sending reminders before an event date.
+Admin Notifications: Informing admins about new event submissions.
+User Invitations: Inviting users to an event via email.

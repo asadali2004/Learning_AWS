@@ -1,0 +1,10 @@
+Where to Use SQS? SQS can be used for Event Creation Handling
+
+Event Creation Handling → Instead of directly processing emails inside the Lambda function, push event details to an SQS queue.
+A separate Lambda function will then read from the queue and send emails asynchronously.
+
+
+ SQS -> Create Queue -> Standard Queue -> 
+ name : EventNotificationQueue
+
+Update IAM user allow sqs 
