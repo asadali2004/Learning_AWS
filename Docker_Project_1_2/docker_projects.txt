@@ -1,0 +1,79 @@
+
+Docker Project Cheat Sheet (Text Printer & Python App)
+=======================================================
+
+📁 Project 1: Simple Text Output (Alpine)
+----------------------------------------
+
+🔸 Purpose:
+Build a minimal image that prints text using `alpine`.
+
+✅ Folder Setup:
+    mkdir docker-text
+    cd docker-text
+
+✅ Dockerfile:
+    FROM alpine
+    CMD ["echo", "Hello from my first Docker image!"]
+
+✅ Build Image:
+    docker build -t my-text-image .
+    # Why? Builds a Docker image named 'my-text-image' from current folder.
+
+✅ Run Container:
+    docker run my-text-image
+    # Why? Starts a container from your image and prints the message.
+
+✅ Output:
+    Hello from my first Docker image!
+
+
+📁 Project 2: Python Script App
+------------------------------
+
+🔸 Purpose:
+Run a Python script inside a container using the official `python:3.10-slim` image.
+
+✅ Folder Setup:
+    mkdir docker-python
+    cd docker-python
+
+✅ app.py:
+    print("Hello from Python inside Docker!")
+
+✅ Dockerfile:
+    FROM python:3.10-slim
+    WORKDIR /app
+    COPY app.py .
+    CMD ["python", "app.py"]
+
+✅ Build Image:
+    docker build -t python-hello .
+    # Why? Builds an image named 'python-hello' that runs your Python script.
+
+✅ Run Container:
+    docker run python-hello
+    # Why? Runs the container and executes 'app.py' inside it.
+
+✅ Output:
+    Hello from Python inside Docker!
+
+
+🔄 Useful Commands for Both Projects
+-----------------------------------
+
+    docker images            # List all Docker images
+    docker ps -a             # List all containers
+    docker rm <container_id> # Remove a stopped container
+    docker rmi <image_id>    # Remove an image
+    docker container prune   # Delete all stopped containers
+    docker image prune       # Delete unused images
+
+
+✅ Recap
+-------
+
+| Project        | What It Does                          | Output                                  |
+|----------------|----------------------------------------|------------------------------------------|
+| docker-text     | Runs Alpine and prints message        | Hello from my first Docker image!       |
+| docker-python   | Runs Python 3.10 and executes script  | Hello from Python inside Docker!        |
