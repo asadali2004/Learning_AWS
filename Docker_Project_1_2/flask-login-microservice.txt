@@ -1,0 +1,146 @@
+
+LOGIN‑MICRO FLASK SERVICE — COMPLETE DOCKER PLAYBOOK
+===================================================
+
+1.  PREREQUISITES
+   • Docker ≥ 20.10 running
+   • Bash shell (Git Bash / WSL / macOS / Linux)
+
+2.  CREATE THE PROJECT SKELETON
+   mkdir login-micro && cd login-micro
+   mkdir templates
+
+   Tree:
+     login-micro/
+       ├── app.py
+       ├── req.txt
+       ├── Dockerfile
+       └── templates/login.html
+
+3.  WRITE THE CODE
+----------------------------------------------------
+3.1  req.txt
+----------------------------------------------------
+Flask==3.0.0
+----------------------------------------------------
+3.2  app.py
+----------------------------------------------------
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from functools import wraps
+import os
+
+app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "change-me")
+
+VALID_USERNAME = "admin"
+VALID_PASSWORD = "password123"
+
+def login_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not session.get("logged_in"):
+            return redirect(url_for("login"))
+        return fn(*args, **kwargs)
+    return wrapper
+
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        user = request.form.get("username")
+        pwd  = request.form.get("password")
+        if user == VALID_USERNAME and pwd == VALID_PASSWORD:
+            session["logged_in"] = True
+            session["user"] = user
+            return redirect(url_for("dashboard"))
+        flash("Invalid credentials")
+    return render_template("login.html")
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return f"Welcome {session['user']} ! <a href='/logout'>Logout</a>"
+
+@app.route("/logout")
+@login_required
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+----------------------------------------------------
+3.3  templates/login.html
+----------------------------------------------------
+<!doctype html>
+<title>Login</title>
+<h2>Login</h2>
+
+<form method="post" action="{{ url_for('login') }}">
+  <input name="username"  placeholder="User"     required><br>
+  <input name="password"  type="password" placeholder="Password" required><br>
+  <button>Sign in</button>
+</form>
+
+{% with msgs = get_flashed_messages() %}
+  {% if msgs %}
+     <p style="color:red;">{{ msgs[0] }}</p>
+  {% endif %}
+{% endwith %}
+
+4.  CREATE THE DOCKERFILE
+----------------------------------------------------
+FROM python:3.9-slim
+
+WORKDIR /app
+COPY req.txt .
+RUN pip install --no-cache-dir -r req.txt
+
+COPY app.py .
+COPY templates/ ./templates/
+
+EXPOSE 5000
+CMD ["python", "app.py"]
+
+(Optional) .dockerignore
+----------------------------------------------------
+__pycache__/
+*.py[cod]
+*.log
+venv/
+.git
+
+5.  BUILD THE IMAGE
+   docker build -t flask-login-microservice .
+
+6.  RUN THE CONTAINER
+   docker run -d --name login \
+     -p 5000:5000 \
+     -e SECRET_KEY=$(openssl rand -hex 16) \
+     flask-login-microservice
+
+   Visit: http://localhost:5000
+   Login: admin / password123
+
+7.  QUICK CURL TEST
+   curl -L localhost:5000
+   curl -i -X POST localhost:5000/login \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "username=admin&password=password123"
+
+8.  STOP & CLEAN UP
+   docker stop login && docker rm login
+
+9.  PUSH TO DOCKER HUB (optional)
+   docker tag flask-login-microservice <hub-user>/flask-login-microservice:latest
+   docker push <hub-user>/flask-login-microservice:latest
+
+10. NEXT STEPS
+   • Add Flask‑Bcrypt and hashed passwords
+   • Move users to a DB
+   • Use JWTs for API auth
+   • docker‑compose for dev stacks
+   • Alpine + multi‑stage build for smaller images
