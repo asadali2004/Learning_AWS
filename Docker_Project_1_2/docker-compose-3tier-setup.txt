@@ -1,0 +1,210 @@
+
+========================
+Docker Compose 3‑Tier Guide
+========================
+Stack: React (frontend) • Node/Express (backend) • PostgreSQL (db)
+
+------------------------------------------------------------
+1. Prerequisites
+------------------------------------------------------------
+• Docker Desktop ≥ 4.x (includes Compose V2)
+• Git / terminal
+• Node 20 locally (only to scaffold React app)
+
+------------------------------------------------------------
+2. Folder Layout
+------------------------------------------------------------
+three-tier-app/
+├─ docker-compose.yml
+├─ backend/
+│  ├─ Dockerfile
+│  ├─ package.json
+│  └─ index.js
+├─ frontend/
+│  ├─ Dockerfile
+│  ├─ package.json
+│  └─ src/…
+└─ db/
+   └─ init.sql
+
+------------------------------------------------------------
+3. Backend (Node + Express)
+------------------------------------------------------------
+backend/package.json
+------------------------------------------------------------
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": { "start": "node index.js" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.11.3"
+  }
+}
+------------------------------------------------------------
+backend/index.js
+------------------------------------------------------------
+const express = require('express');
+const { Pool } = require('pg');
+const app = express();
+const pool = new Pool({
+  host: process.env.DB_HOST || 'db',
+  user: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
+});
+app.get('/api/users', async (_, res) => {
+  const { rows } = await pool.query('SELECT * FROM users;');
+  res.json(rows);
+});
+app.listen(4000, () => console.log('Backend ready on :4000'));
+------------------------------------------------------------
+backend/Dockerfile
+------------------------------------------------------------
+# build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+# runtime
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app .
+EXPOSE 4000
+CMD ["npm","start"]
+
+------------------------------------------------------------
+4. Frontend (React)
+------------------------------------------------------------
+# scaffold once outside Docker
+cd frontend
+npx create-react-app .
+npm install axios
+# replace src/App.js with:
+useEffect(() => {
+  axios.get('/api/users').then(r => setUsers(r.data));
+}, []);
+
+frontend/Dockerfile
+------------------------------------------------------------
+# Build stage
+FROM node:20-alpine AS builder
+WORKDIR /ui
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Serve with Nginx
+FROM nginx:1.27-alpine
+COPY --from=builder /ui/build /usr/share/nginx/html
+
+# Custom Nginx config (SPA + API proxy)
+RUN cat > /etc/nginx/conf.d/default.conf <<'EOF'
+server {
+    listen 80;
+    location /api/ {
+        proxy_pass http://backend:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+}
+EOF
+EXPOSE 80
+CMD ["nginx","-g","daemon off;"]
+
+------------------------------------------------------------
+5. Database seeding
+------------------------------------------------------------
+db/init.sql
+------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS users(
+  id SERIAL PRIMARY KEY,
+  name TEXT
+);
+INSERT INTO users (name) VALUES ('Alice'), ('Bob');
+
+Note: `init.sql` runs only the FIRST time the volume is created.
+
+------------------------------------------------------------
+6. docker-compose.yml
+------------------------------------------------------------
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mysecret
+      POSTGRES_DB: mydb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  backend:
+    build: ./backend
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mysecret
+      POSTGRES_DB: mydb
+      DB_HOST: db
+    depends_on:
+      - db
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  db-data:
+
+------------------------------------------------------------
+7. Commands
+------------------------------------------------------------
+# build & run
+docker compose up --build
+
+# stop (keep data)
+docker compose down
+
+# stop + delete data
+docker compose down -v
+
+# exec into db
+docker compose exec db psql -U myuser -d mydb
+
+# insert new record manually
+INSERT INTO users (name) VALUES ('Charlie');
+
+------------------------------------------------------------
+8. Common Errors & Fixes
+------------------------------------------------------------
+• npm ci fails → generate package-lock.json or swap to npm install.
+• 500 loop in Nginx → ensure try_files + root lines exactly as above.
+• Changed init.sql not reflected → remove volume: docker compose down -v.
+• “builder image not found” → ensure first line of Dockerfile is correct base.
+
+------------------------------------------------------------
+9. Extras
+------------------------------------------------------------
+• Add .dockerignore (node_modules, npm-debug.log) to shrink context.
+• HEALTHCHECK in Dockerfiles for readiness probes.
+• Push images: docker tag && docker push.
+• Deploy on ECS/Fargate, Lightsail, or Azure Container Apps.
+
+Happy shipping! 🚀

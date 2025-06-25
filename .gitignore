@@ -177,3 +177,5 @@ cython_debug/
 secret/
 lesson11_public_server/node_modules
 lesson12_private_server/node_modules
+
+lesson_ec2_docker_jenkins/
